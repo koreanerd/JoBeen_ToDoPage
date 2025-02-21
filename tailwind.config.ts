@@ -30,6 +30,9 @@ export default {
         heading: '18px',
         title: '20px',
       },
+      screens: {
+        'max-lg': { max: '1000px' },
+      },
     },
   },
   plugins: [],
