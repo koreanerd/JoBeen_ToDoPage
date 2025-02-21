@@ -3,7 +3,7 @@ import SvgIcon from '../icons/SvgIcon';
 export default function TaskCard() {
   return (
     <div className="flex flex-col gap-[12px]">
-      <div className="p-4 rounded-lg shadow-[2px_2px_4px_2px_rgba(0,0,0,0.1)]">
+      <div className="p-[15px] rounded-lg shadow-[2px_2px_4px_2px_rgba(0,0,0,0.1)]">
         <div className="flex flex-nowrap items-center gap-[5px] max-sm:w-[120px]">
           <SvgIcon
             className="text-accent"
@@ -27,6 +27,10 @@ export default function TaskCard() {
         <div className="my-[25px] border-t border-border"></div>
 
         <div className="text-body">Description</div>
+
+        <div className="w-[150px] mx-auto mt-[15px] rounded-[5px] bg-accent text-fade text-subHeading text-center hover:opacity-75">
+          Save
+        </div>
       </div>
     </div>
   );
