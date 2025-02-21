@@ -32,6 +32,7 @@ export default {
       },
       screens: {
         'max-lg': { max: '1000px' },
+        'max-sm': { max: '500px' },
       },
     },
   },
