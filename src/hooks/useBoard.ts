@@ -1,16 +1,20 @@
 'use client';
 
-import { Board } from '@/types/board';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Board } from '@/types/board';
 import { boardApi } from '@/services/api/boardApi';
-export const useBoard = (initialData: Board[]) => {
+
+export const useBoard = () => {
   const queryClient = useQueryClient();
 
   const { data: boards = [] } = useQuery({
     queryKey: ['boards'],
     queryFn: boardApi.fetchBoards,
-    initialData,
   });
+
+  const setBoards = (newBoards: Board[]) => {
+    queryClient.setQueryData(['boards'], newBoards);
+  };
 
   const addBoard = useMutation({
     mutationFn: boardApi.addBoard,
@@ -42,5 +46,19 @@ export const useBoard = (initialData: Board[]) => {
     },
   });
 
-  return { boards, addBoard, deleteBoard, updateBoardTitle };
+  const updateBoardOrder = useMutation({
+    mutationFn: boardApi.updateBoardOrder,
+    onSuccess: (updatedBoards) => {
+      queryClient.setQueryData(['boards'], updatedBoards); // UI 업데이트
+    },
+  });
+
+  return {
+    boards,
+    setBoards,
+    addBoard,
+    deleteBoard,
+    updateBoardTitle,
+    updateBoardOrder,
+  };
 };

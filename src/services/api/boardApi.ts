@@ -10,4 +10,6 @@ export const boardApi = {
   deleteBoard: (id: number) => apiClient(API_BASE_URL, 'DELETE', { id }),
   updateBoard: ({ id, title }: { id: number; title: string }) =>
     apiClient<Board>(API_BASE_URL, 'PUT', { id, title }),
+  updateBoardOrder: (boards: Board[]) =>
+    apiClient<Board[]>(API_BASE_URL, 'PUT', { boards }),
 };

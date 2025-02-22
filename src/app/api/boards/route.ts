@@ -49,21 +49,30 @@ export async function DELETE(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { id, title } = await req.json();
+    const { id, title, boards: updatedBoards } = await req.json();
 
-    if (!id || !title) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+    if (updatedBoards) {
+      if (!Array.isArray(updatedBoards)) {
+        return NextResponse.json(
+          { error: 'Invalid data format' },
+          { status: 400 },
+        );
+      }
+      boards = updatedBoards;
+      return NextResponse.json(boards, { status: 200 });
     }
 
-    const boardIndex = boards.findIndex((board) => board.id === id);
-    if (boardIndex === -1) {
-      return NextResponse.json({ error: 'Board not found' }, { status: 404 });
+    if (id && title) {
+      const boardIndex = boards.findIndex((board) => board.id === id);
+      if (boardIndex === -1) {
+        return NextResponse.json({ error: 'Board not found' }, { status: 404 });
+      }
+
+      boards[boardIndex].title = title;
+      return NextResponse.json(boards[boardIndex], { status: 200 });
     }
 
-    // 이름 업데이트
-    boards[boardIndex].title = title;
-
-    return NextResponse.json(boards[boardIndex], { status: 200 });
+    return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },

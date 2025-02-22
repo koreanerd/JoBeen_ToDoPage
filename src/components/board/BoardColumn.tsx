@@ -2,27 +2,23 @@
 
 import { useState } from 'react';
 import { Board } from '@/types/board';
+import { useBoard } from '@/hooks/useBoard';
+import { svgPaths } from '@/config/svgPaths';
 import TaskCard from '@/components/card/TaskCard';
 import SvgIcon from '../icons/SvgIcon';
+import IconButton from '../common/IconButton';
 
-interface BoardColumnProps extends Omit<Board, 'status'> {
-  onUpdateTitle: (id: number, title: string) => void;
-}
-
-export default function BoardColumn({
-  id,
-  title,
-  onUpdateTitle,
-}: BoardColumnProps) {
+export default function BoardColumn({ id, title }: Board) {
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
+  const { updateBoardTitle, deleteBoard } = useBoard();
 
   const handleEdit = () => setIsEditing(true);
 
   const handleConfirmEdit = () => {
     setIsEditing(false);
     if (newTitle.trim() !== '' && newTitle !== title) {
-      onUpdateTitle(id, newTitle);
+      updateBoardTitle.mutate({ id, title: newTitle });
     } else {
       setNewTitle(title);
     }
@@ -30,7 +26,7 @@ export default function BoardColumn({
 
   return (
     <div className="w-full">
-      <div className="flex items-center gap-[12px] mb-[12px]">
+      <div className="flex items-center gap-[12px] mt-[5px] mb-[12px]">
         {isEditing ? (
           <input
             type="text"
@@ -51,6 +47,22 @@ export default function BoardColumn({
         )}
 
         <div className="text-body">0</div>
+
+        <IconButton
+          onClick={() => deleteBoard.mutate(id)}
+          icon={
+            <SvgIcon
+              className="text-accent opacity-[50%] hover:text-accent hover:opacity-[100%]"
+              width={25}
+              height={25}
+              pathData={svgPaths.trash}
+              viewBox="0 0 20 20"
+            />
+          }
+          aria-label="Delete Board"
+          title="Delete Board"
+          className="absolute top-[25px] right-0 hidden group-hover:flex pointer-events-auto"
+        />
       </div>
 
       <div>

@@ -1,19 +1,36 @@
 'use client';
 
-import { Board } from '@/types/board';
+import { useId } from 'react';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  horizontalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { useBoard } from '@/hooks/useBoard';
 import { svgPaths } from '@/config/svgPaths';
-import BoardColumn from '@/components/board/BoardColumn';
+import DraggableBoardColumn from './DraggableBoardColumn';
 import IconButton from '@/components/common/IconButton';
 import SvgIcon from '@/components/icons/SvgIcon';
 
-export default function BoardContainer({
-  initialData,
-}: {
-  initialData: Board[];
-}) {
-  const { boards, addBoard, deleteBoard, updateBoardTitle } =
-    useBoard(initialData);
+export default function BoardContainer() {
+  const dndContextId = useId();
+  const { boards, setBoards, addBoard, updateBoardOrder } = useBoard();
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = boards.findIndex((b) => b.id === active.id);
+    const newIndex = boards.findIndex((b) => b.id === over.id);
+
+    if (oldIndex !== -1 && newIndex !== -1) {
+      const newBoards = arrayMove(boards, oldIndex, newIndex);
+      setBoards(newBoards);
+      updateBoardOrder.mutate(newBoards);
+    }
+  };
 
   return (
     <div className="w-full px-[100px] max-lg:px-[20px]">
@@ -21,58 +38,46 @@ export default function BoardContainer({
         Your Pretty To-do List
       </div>
 
-      <div className="flex gap-4">
-        <div className="flex justify-between gap-4 px-[5px] w-full">
-          {boards.map((board) => (
-            <div key={board.id} className="relative w-full group">
-              <IconButton
-                onClick={() => deleteBoard.mutate(board.id)}
-                icon={
-                  <SvgIcon
-                    className="text-fade hover:text-accent"
-                    width={25}
-                    height={25}
-                    pathData={svgPaths.trash}
-                    viewBox="0 0 20 20"
-                  />
-                }
-                aria-label="Delete Board"
-                title="Delete Board"
-                className="absolute top-0 right-0 hidden group-hover:flex pointer-events-auto"
-              />
-
-              <BoardColumn
-                key={board.status}
-                id={board.id}
-                title={board.title}
-                onUpdateTitle={(id, title) =>
-                  updateBoardTitle.mutate({ id, title })
-                }
-              />
+      <DndContext
+        id={dndContextId}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={boards.map((b) => b.id)}
+          strategy={horizontalListSortingStrategy}
+        >
+          <div className="flex gap-4">
+            <div className="flex justify-between gap-4 px-[5px] w-full">
+              {boards.map((board) => (
+                <div key={board.id} className="relative w-full group">
+                  <DraggableBoardColumn board={board} />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <IconButton
-          onClick={() =>
-            addBoard.mutate({
-              status: `custom-${boards.length + 1}`,
-              title: `New Board ${boards.length + 1}`,
-            })
-          }
-          icon={
-            <SvgIcon
-              className="text-accent hover:opacity-[50%]"
-              width={25}
-              height={25}
-              pathData={svgPaths.plust}
-              viewBox="0 0 20 20"
+            <IconButton
+              onClick={() =>
+                addBoard.mutate({
+                  status: `custom-${boards.length + 1}`,
+                  title: `New Board ${boards.length + 1}`,
+                })
+              }
+              icon={
+                <SvgIcon
+                  className="text-accent hover:opacity-[50%]"
+                  width={25}
+                  height={25}
+                  pathData={svgPaths.plust}
+                  viewBox="0 0 20 20"
+                />
+              }
+              aria-label="Add Board"
+              title="Add Board"
             />
-          }
-          aria-label="Add Board"
-          title="Add Board"
-        />
-      </div>
+          </div>
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }
