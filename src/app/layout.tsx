@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
+import Providers from './providers';
+import RecoilProvider from '@/recoil/RecoilProvider';
 import localFont from 'next/font/local';
 import '@/styles/globals.css';
-import RecoilProvider from '@/recoil/RecoilProvider';
 
 const pretendard = localFont({
   src: [
@@ -49,7 +50,9 @@ export default function RootLayout({
       <body
         className={`${pretendard.variable} ${pretendard.variable} antialiased`}
       >
-        <RecoilProvider>{children}</RecoilProvider>
+        <Providers>
+          <RecoilProvider>{children}</RecoilProvider>
+        </Providers>
       </body>
     </html>
   );
