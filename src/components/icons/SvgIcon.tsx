@@ -17,7 +17,7 @@ const SvgIcon = ({
       fillOpacity="1"
       className={className}
     >
-      <path d={pathData} />
+      <path fillRule="evenodd" clipRule="evenodd" d={pathData} />
     </svg>
   );
 };

@@ -1,30 +1,54 @@
-import { cva } from 'class-variance-authority';
+'use client';
+
+import { useState } from 'react';
+import { Board } from '@/types/board';
 import TaskCard from '@/components/card/TaskCard';
 import SvgIcon from '../icons/SvgIcon';
 
-interface BoardColumnProps {
-  status: 'notStarted' | 'inProgress' | 'done';
-  title: string;
+interface BoardColumnProps extends Omit<Board, 'status'> {
+  onUpdateTitle: (id: number, title: string) => void;
 }
 
-const headingStyles = cva(
-  'w-fit p-[3px] border-[2px] rounded-[5px] leading-none font-medium',
-  {
-    variants: {
-      status: {
-        notStarted: 'text-notStarted border-notStarted',
-        inProgress: 'text-inProgress border-inProgress',
-        done: 'text-done border-done',
-      },
-    },
-  },
-);
+export default function BoardColumn({
+  id,
+  title,
+  onUpdateTitle,
+}: BoardColumnProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [newTitle, setNewTitle] = useState(title);
 
-export default function BoardColumn({ status, title }: BoardColumnProps) {
+  const handleEdit = () => setIsEditing(true);
+
+  const handleConfirmEdit = () => {
+    setIsEditing(false);
+    if (newTitle.trim() !== '' && newTitle !== title) {
+      onUpdateTitle(id, newTitle);
+    } else {
+      setNewTitle(title);
+    }
+  };
+
   return (
-    <div className="w-[calc(100%/3)]">
+    <div className="w-full">
       <div className="flex items-center gap-[12px] mb-[12px]">
-        <h2 className={headingStyles({ status })}>{title}</h2>
+        {isEditing ? (
+          <input
+            type="text"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            onBlur={handleConfirmEdit}
+            onKeyDown={(e) => e.key === 'Enter' && handleConfirmEdit()}
+            className="px-[5px] border border-fade bg-fade rounded focus:outline-none"
+            autoFocus
+          />
+        ) : (
+          <h2
+            onClick={handleEdit}
+            className="px-[5px] border border-accent rounded cursor-pointer"
+          >
+            {title}
+          </h2>
+        )}
 
         <div className="text-body">0</div>
       </div>
