@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useState, RefObject } from 'react';
 import { useTask } from '@/hooks/useTask';
+import { useMenuToggle } from '@/hooks/useMenuToggle';
 import IconButton from '../common/IconButton';
-import { useState } from 'react';
 import SvgIcon from '../icons/SvgIcon';
 import { svgPaths } from '@/config/svgPaths';
 
@@ -12,6 +12,33 @@ interface TaskCardProps {
   id: number;
 }
 
+interface TaskMenuProps {
+  onEdit: () => void;
+  onDelete: () => void;
+  menuRef: RefObject<HTMLDivElement | null>;
+}
+
+const TaskMenu: React.FC<TaskMenuProps> = ({ onEdit, onDelete, menuRef }) => (
+  <div
+    ref={menuRef}
+    className="absolute left-[10px] top-[15px] w-fit bg-white shadow-lg border border-border rounded-[5px] z-10"
+  >
+    <button
+      onClick={onEdit}
+      className="w-full text-left px-4 py-2 text-blue-600 hover:bg-gray-100"
+    >
+      Edit
+    </button>
+
+    <button
+      onClick={onDelete}
+      className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+    >
+      Delete
+    </button>
+  </div>
+);
+
 export default function TaskCard({
   title,
   description = '',
@@ -19,35 +46,15 @@ export default function TaskCard({
   id,
 }: TaskCardProps) {
   const { deleteTask, updateTask } = useTask(boardId);
+  const { isMenuOpen, toggleMenu, menuRef } = useMenuToggle();
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedDescription, setEditedDescription] = useState(description);
 
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   const handleEdit = () => {
     setIsEditing(true);
-    setIsMenuOpen(false);
+    toggleMenu();
   };
 
   const handleSave = () => {
@@ -101,24 +108,11 @@ export default function TaskCard({
             />
 
             {isMenuOpen && (
-              <div
-                ref={menuRef}
-                className="absolute left-[10px] top-[15px] w-fit bg-white shadow-lg border border-border rounded-[5px] z-10"
-              >
-                <button
-                  onClick={handleEdit}
-                  className="w-full text-left px-4 py-2 text-blue-600 hover:bg-gray-100"
-                >
-                  Edit
-                </button>
-
-                <button
-                  onClick={() => deleteTask.mutate(id)}
-                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
-                >
-                  Delete
-                </button>
-              </div>
+              <TaskMenu
+                onEdit={handleEdit}
+                onDelete={() => deleteTask.mutate(id)}
+                menuRef={menuRef}
+              />
             )}
           </div>
         </div>

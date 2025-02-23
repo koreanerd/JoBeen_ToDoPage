@@ -4,11 +4,11 @@ import { useId } from 'react';
 import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
 import {
   SortableContext,
-  arrayMove,
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { useBoard } from '@/hooks/useBoard';
 import { svgPaths } from '@/config/svgPaths';
+import { handleBoardDragEnd } from '@/utils/utils';
 import DraggableBoardColumn from './DraggableBoardColumn';
 import IconButton from '@/components/common/IconButton';
 import SvgIcon from '@/components/icons/SvgIcon';
@@ -19,21 +19,22 @@ export default function BoardContainer() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    if (!over || active.id === over.id) return;
 
-    if (!over || active.id === over.id) {
-      return;
-    }
+    handleBoardDragEnd(
+      boards,
+      setBoards,
+      updateBoardOrder,
+      Number(active.id),
+      Number(over.id),
+    );
+  };
 
-    const oldIndex = boards.findIndex((b) => b.id === active.id);
-    const newIndex = boards.findIndex((b) => b.id === over.id);
-
-    if (oldIndex !== -1 && newIndex !== -1) {
-      const newBoards = arrayMove(boards, oldIndex, newIndex);
-
-      setBoards(newBoards);
-
-      updateBoardOrder.mutate(newBoards);
-    }
+  const addNewBoard = () => {
+    addBoard.mutate({
+      status: `custom-${boards.length + 1}`,
+      title: `New Board ${boards.length + 1}`,
+    });
   };
 
   return (
@@ -60,12 +61,7 @@ export default function BoardContainer() {
               ))}
 
               <IconButton
-                onClick={() =>
-                  addBoard.mutate({
-                    status: `custom-${boards.length + 1}`,
-                    title: `New Board ${boards.length + 1}`,
-                  })
-                }
+                onClick={addNewBoard}
                 icon={
                   <SvgIcon
                     className="text-accent hover:opacity-[50%]"

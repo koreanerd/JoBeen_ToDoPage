@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
-
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -16,6 +14,8 @@ import SvgIcon from '../icons/SvgIcon';
 import IconButton from '../common/IconButton';
 import DraggableTaskCard from '../card/DraggableTaskCard';
 import { UseMutationResult } from '@tanstack/react-query';
+import { useEditTitle } from '@/hooks/useEditTitle';
+import { handleTaskDragEnd } from '@/utils/utils';
 
 interface BoardColumnProps {
   board: Board;
@@ -36,40 +36,17 @@ export default function BoardColumn({
   const { updateBoardTitle, deleteBoard } = useBoard();
   const { updateTaskOrder } = useTask(board.id);
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [newTitle, setNewTitle] = useState(board.title);
+  const { isEditing, newTitle, setNewTitle, handleEdit, handleConfirmEdit } =
+    useEditTitle(board.title, updateBoardTitle, board.id);
 
-  const boardTasks: Task[] = Array.isArray(tasks) ? tasks : [];
-
-  const handleEdit = () => setIsEditing(true);
-
-  const handleConfirmEdit = () => {
-    setIsEditing(false);
-    if (newTitle.trim() !== '' && newTitle !== board.title) {
-      updateBoardTitle.mutate({ id: board.id, title: newTitle });
-    } else {
-      setNewTitle(board.title);
-    }
-  };
+  const boardTasks: Task[] = tasks || [];
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+    handleTaskDragEnd(event, updateTaskOrder);
+  };
 
-    if (!over || active.id === over.id) return;
-
-    const activeData = active.data.current;
-    const overData = over.data.current;
-
-    if (!activeData || !overData) return;
-
-    if (activeData.type === 'task' && overData.type === 'task') {
-      const fromBoardId = activeData.boardId;
-      const toBoardId = overData.boardId;
-
-      if (fromBoardId === toBoardId) {
-        updateTaskOrder(fromBoardId, activeData.taskId, overData.taskId);
-      }
-    }
+  const handleAddTask = () => {
+    addTask.mutate({ boardId: board.id, title: 'New Task' });
   };
 
   return (
@@ -132,7 +109,7 @@ export default function BoardColumn({
       </DndContext>
 
       <button
-        onClick={() => addTask.mutate({ boardId: board.id, title: 'New Task' })}
+        onClick={handleAddTask}
         className="flex items-center gap-[5px] w-full py-[5px] pl-[15px] border border-fade mt-[12px] rounded-[5px] hover:border-none hover:bg-accent"
       >
         <SvgIcon
