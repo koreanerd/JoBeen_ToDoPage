@@ -37,7 +37,16 @@ export default function BoardColumn({
   const { updateTaskOrder } = useTask(board.id);
 
   const { isEditing, newTitle, setNewTitle, handleEdit, handleConfirmEdit } =
-    useEditTitle(board.title, updateBoardTitle, board.id);
+    useEditTitle(
+      board.title,
+      updateBoardTitle as UseMutationResult<
+        Board,
+        Error,
+        { id: number; title: string },
+        void
+      >,
+      board.id,
+    );
 
   const boardTasks: Task[] = tasks || [];
 

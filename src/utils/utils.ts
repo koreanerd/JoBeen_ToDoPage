@@ -1,11 +1,12 @@
 import { Board } from '@/types/board';
 import { arrayMove } from '@dnd-kit/sortable';
 import { DragEndEvent } from '@dnd-kit/core';
+import { UseMutationResult } from '@tanstack/react-query';
 
 export const handleBoardDragEnd = (
   boards: Board[],
   setBoards: (newBoards: Board[]) => void,
-  updateBoardOrder: any,
+  updateBoardOrder: UseMutationResult<void, Error, Board[], unknown>,
   activeId: number,
   overId: number,
 ) => {

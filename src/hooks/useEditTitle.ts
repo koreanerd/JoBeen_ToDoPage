@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { UseMutationResult } from '@tanstack/react-query';
+import { Board } from '@/types/board';
 
 export function useEditTitle(
   initialTitle: string,
   updateBoardTitle: UseMutationResult<
-    any,
-    any,
+    Board,
+    Error,
     { id: number; title: string },
-    any
+    void
   >,
   boardId: number,
 ) {
