@@ -5,7 +5,7 @@ _과제 형태의 프로젝트이기 때문에 `.env` 파일을 Ignore 하지 �
 <p>
 Your Pretty To-Do List는 칸반 스타일의 To-Do 리스트 관리 웹 애플리케이션입니다.
 Next.js 15, TypeScript, Tailwind CSS를 기반으로 개발되었으며, React Query를 활용한 데이터 관리와
-dnd-kit을 이용한 드래그 앤 드롭 기능을 통해 **직관적인 사용자 경험(UX)**을 제공합니다.
+dnd-kit을 이용한 드래그 앤 드롭 기능을 통해 직관적인 사용자 경험(UX)을 제공합니다.
 
 본 프로젝트는 글로벌널리지 프론트엔드 개발자 채용 과제 수행을 위해 제작되었으며,
 보드 및 할 일(Task)의 생성, 수정, 삭제, 이동 기능을 포함하여 실제 업무에서 활용할 수 있는 칸반 시스템을 구현하는 것을 목표로 합니다.
@@ -138,10 +138,15 @@ dnd-kit을 이용한 드래그 앤 드롭 기능을 통해 **직관적인 사용
 <br>
 
 ## Figma 목업
+![figma-mockup](https://github.com/user-attachments/assets/4b2f3b4c-ee1d-4090-a248-dd8f0b33c054)
 
 <br>
 
 ## 데모
+<div align="center">
+  <img src="" alt="Dashboard Demo gif">
+  <p><em>3D 모델링과 실시간 모니터링 데모</em></p>
+</div>
 
 ## 주요 개발 과정과 고민
 
