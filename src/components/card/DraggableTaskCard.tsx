@@ -34,11 +34,11 @@ export default function DraggableTaskCard({
         {...attributes}
       >
         <div className="w-[10px] h-[10px] flex flex-col justify-between">
-          <div className="w-full h-[2px] bg-accent"></div>
+          <div className="w-full h-[2px] bg-fade"></div>
 
-          <div className="w-full h-[2px] bg-accent"></div>
+          <div className="w-full h-[2px] bg-fade"></div>
 
-          <div className="w-full h-[2px] bg-accent"></div>
+          <div className="w-full h-[2px] bg-fade"></div>
         </div>
       </div>
       <TaskCard

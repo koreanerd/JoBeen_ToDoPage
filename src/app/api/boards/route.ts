@@ -1,23 +1,8 @@
 import { NextResponse } from 'next/server';
-import { Board } from '@/types/board';
-
-export let boards: Board[] = [
-  {
-    id: 1,
-    status: 'default',
-    title: 'Click & Change title 📌',
-    tasks: [{ id: 1, title: 'Task 1', description: 'description', boardId: 1 }],
-  },
-  {
-    id: 2,
-    status: 'default',
-    title: 'Click & Change title 📌',
-    tasks: [{ id: 2, title: 'Task 2', description: 'description', boardId: 2 }],
-  },
-];
+import { boardsData } from '@/config/boardsData';
 
 export async function GET() {
-  return NextResponse.json(boards);
+  return NextResponse.json(boardsData.boards);
 }
 
 export async function POST(req: Request) {
@@ -35,10 +20,10 @@ export async function POST(req: Request) {
       tasks: [],
     };
 
-    boards.push(newBoard);
+    boardsData.boards.push(newBoard);
 
     return NextResponse.json(newBoard, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 },
@@ -50,13 +35,13 @@ export async function DELETE(req: Request) {
   try {
     const { id } = await req.json();
 
-    boards = boards.filter((board) => board.id !== id);
+    boardsData.boards = boardsData.boards.filter((board) => board.id !== id);
 
     return NextResponse.json(
       { message: 'Board deleted successfully' },
       { status: 200 },
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 },
@@ -75,25 +60,27 @@ export async function PUT(req: Request) {
           { status: 400 },
         );
       }
-      boards = updatedBoards;
+      boardsData.boards = updatedBoards;
 
-      return NextResponse.json(boards, { status: 200 });
+      return NextResponse.json(boardsData.boards, { status: 200 });
     }
 
     if (id && title) {
-      const boardIndex = boards.findIndex((board) => board.id === id);
+      const boardIndex = boardsData.boards.findIndex(
+        (board) => board.id === id,
+      );
 
       if (boardIndex === -1) {
         return NextResponse.json({ error: 'Board not found' }, { status: 404 });
       }
 
-      boards[boardIndex].title = title;
+      boardsData.boards[boardIndex].title = title;
 
-      return NextResponse.json(boards[boardIndex], { status: 200 });
+      return NextResponse.json(boardsData.boards[boardIndex], { status: 200 });
     }
 
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 },

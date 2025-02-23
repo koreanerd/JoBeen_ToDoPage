@@ -58,27 +58,27 @@ export default function BoardContainer() {
                   <DraggableBoardColumn board={board} />
                 </div>
               ))}
-            </div>
 
-            <IconButton
-              onClick={() =>
-                addBoard.mutate({
-                  status: `custom-${boards.length + 1}`,
-                  title: `New Board ${boards.length + 1}`,
-                })
-              }
-              icon={
-                <SvgIcon
-                  className="text-accent hover:opacity-[50%]"
-                  width={25}
-                  height={25}
-                  pathData={svgPaths.plus}
-                  viewBox="0 0 20 20"
-                />
-              }
-              aria-label="Add Board"
-              title="Add Board"
-            />
+              <IconButton
+                onClick={() =>
+                  addBoard.mutate({
+                    status: `custom-${boards.length + 1}`,
+                    title: `New Board ${boards.length + 1}`,
+                  })
+                }
+                icon={
+                  <SvgIcon
+                    className="text-accent hover:opacity-[50%]"
+                    width={25}
+                    height={25}
+                    pathData={svgPaths.plus}
+                    viewBox="0 0 20 20"
+                  />
+                }
+                aria-label="Add Board"
+                title="Add Board"
+              />
+            </div>
           </div>
         </SortableContext>
       </DndContext>

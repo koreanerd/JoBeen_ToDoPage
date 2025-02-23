@@ -84,7 +84,7 @@ export default function TaskCard({
             <h3 className="text-title font-medium">{title}</h3>
           )}
 
-          <div className="relative">
+          <div className="relative flex items-center">
             <IconButton
               onClick={toggleMenu}
               icon={

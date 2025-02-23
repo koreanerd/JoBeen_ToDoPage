@@ -93,20 +93,25 @@ export default function BoardColumn({
             {board.title}
           </h2>
         )}
-        <IconButton
-          onClick={() => deleteBoard.mutate(board.id)}
-          icon={
-            <SvgIcon
-              className="text-accent opacity-[50%] hover:text-accent hover:opacity-[100%]"
-              width={25}
-              height={25}
-              pathData={svgPaths.trash}
-              viewBox="0 0 20 20"
+        <div className="ml-auto">
+          <div className="group relative">
+            <IconButton
+              onClick={() => deleteBoard.mutate(board.id)}
+              icon={
+                <SvgIcon
+                  className="opacity-[50%] group-hover:text-accent group-hover:opacity-[100%]"
+                  width={25}
+                  height={25}
+                  pathData={svgPaths.trash}
+                  viewBox="0 0 20 20"
+                />
+              }
+              aria-label="Delete Board"
+              title="Delete Board"
+              className="opacity-0 group-hover:opacity-100"
             />
-          }
-          aria-label="Delete Board"
-          title="Delete Board"
-        />
+          </div>
+        </div>
       </div>
 
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

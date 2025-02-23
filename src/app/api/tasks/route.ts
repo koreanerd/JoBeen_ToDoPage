@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { Task } from '@/types/task';
-import { boards } from '../boards/route';
+import { boardsData } from '@/config/boardsData';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const boardId = searchParams.get('boardId');
 
   if (boardId) {
-    const board = boards.find((b) => b.id === Number(boardId));
+    const board = boardsData.boards.find((b) => b.id === Number(boardId));
 
     if (!board) {
       return NextResponse.json({ error: 'Board not found' }, { status: 404 });
@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     return NextResponse.json(board.tasks, { status: 200 });
   }
 
-  return NextResponse.json(boards, { status: 200 });
+  return NextResponse.json(boardsData.boards, { status: 200 });
 }
 
 export async function POST(req: Request) {
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
 
-    const board = boards.find((b) => b.id === Number(boardId));
+    const board = boardsData.boards.find((b) => b.id === Number(boardId));
 
     if (!board) {
       return NextResponse.json({ error: 'Board not found' }, { status: 404 });
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     board.tasks.push(newTask);
 
     return NextResponse.json(newTask, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 },
@@ -61,7 +61,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
 
-    const board = boards.find((b) => b.id === Number(boardId));
+    const board = boardsData.boards.find((b) => b.id === Number(boardId));
 
     if (!board) {
       return NextResponse.json({ error: 'Board not found' }, { status: 404 });
@@ -73,7 +73,7 @@ export async function DELETE(req: Request) {
       { message: 'Task deleted successfully' },
       { status: 200 },
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 },
@@ -95,7 +95,7 @@ export async function PUT(req: Request) {
     } = requestBody;
 
     if (boardId && tasks) {
-      const board = boards.find((b) => b.id === Number(boardId));
+      const board = boardsData.boards.find((b) => b.id === Number(boardId));
 
       if (!board) {
         return NextResponse.json({ error: 'Board not found' }, { status: 404 });
@@ -111,7 +111,9 @@ export async function PUT(req: Request) {
 
     // 태스크 이동 처리
     if (fromBoardId && toBoardId && taskId) {
-      const fromBoard = boards.find((b) => b.id === Number(fromBoardId));
+      const fromBoard = boardsData.boards.find(
+        (b) => b.id === Number(fromBoardId),
+      );
 
       if (!fromBoard) {
         return NextResponse.json(
@@ -128,7 +130,7 @@ export async function PUT(req: Request) {
 
       fromBoard.tasks = fromBoard.tasks?.filter((t) => t.id !== Number(taskId));
 
-      const toBoard = boards.find((b) => b.id === Number(toBoardId));
+      const toBoard = boardsData.boards.find((b) => b.id === Number(toBoardId));
 
       if (!toBoard) {
         return NextResponse.json(
@@ -146,7 +148,7 @@ export async function PUT(req: Request) {
     }
 
     if (taskId && boardId && title !== undefined) {
-      const board = boards.find((b) => b.id === Number(boardId));
+      const board = boardsData.boards.find((b) => b.id === Number(boardId));
 
       if (!board) {
         return NextResponse.json({ error: 'Board not found' }, { status: 404 });
@@ -165,7 +167,7 @@ export async function PUT(req: Request) {
     }
 
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 },
