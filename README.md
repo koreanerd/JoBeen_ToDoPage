@@ -138,15 +138,54 @@ dnd-kit을 이용한 드래그 앤 드롭 기능을 통해 직관적인 사용�
 <br>
 
 ## Figma 목업
+
 ![figma-mockup](https://github.com/user-attachments/assets/4b2f3b4c-ee1d-4090-a248-dd8f0b33c054)
 
 <br>
 
 ## 데모
+
 <div align="center">
-  <img src="" alt="Dashboard Demo gif">
-  <p><em>3D 모델링과 실시간 모니터링 데모</em></p>
+  <img src="assets/create-board.gif" alt="Dashboard Demo gif">
+  <p><em>보드 생성 데모</em></p>
 </div>
+
+<div align="center">
+  <img src="assets/update-board-1.gif" alt="Dashboard Demo gif">
+  <p><em>보드 수정 데모 1</em></p>
+</div>
+
+<div align="center">
+  <img src="assets/update-board-2.gif" alt="Dashboard Demo gif">
+  <p><em>보드 수정 데모 2</em></p>
+</div>
+
+<div align="center">
+  <img src="assets/delete-board.gif" alt="Dashboard Demo gif">
+  <p><em>보드 삭제 데모</em></p>
+</div>
+
+<div align="center">
+  <img src="assets/create-card.gif" alt="Dashboard Demo gif">
+  <p><em>할 일 생성 데모</em></p>
+</div>
+
+<div align="center">
+  <img src="assets/update-card-1.gif" alt="Dashboard Demo gif">
+  <p><em>할 일 수정 데모</em></p>
+</div>
+
+<div align="center">
+  <img src="assets/update-card-2.gif" alt="Dashboard Demo gif">
+  <p><em>할 일 수정 데모</em></p>
+</div>
+
+<div align="center">
+  <img src="assets/delete-card.gif" alt="Dashboard Demo gif">
+  <p><em>할 일 삭제 데모</em></p>
+</div>
+
+<br>
 
 ## 주요 개발 과정과 고민
 
