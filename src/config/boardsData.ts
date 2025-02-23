@@ -28,7 +28,13 @@ export const boardsData = {
       status: 'default',
       title: 'In Progress 📌',
       tasks: [
-        { id: 2, title: 'Task 2', description: 'Do something.', boardId: 2 },
+        {
+          id: 2,
+          title: 'How do I change the board title? 📝',
+          description:
+            'Long press on the board title! (You can also just lightly press it...😳😳😳)',
+          boardId: 2,
+        },
       ],
     },
     {
