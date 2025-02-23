@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Providers from './providers';
-import RecoilProvider from '@/recoil/RecoilProvider';
 import localFont from 'next/font/local';
 import '@/styles/globals.css';
 
@@ -50,9 +49,7 @@ export default function RootLayout({
       <body
         className={`${pretendard.variable} ${pretendard.variable} antialiased`}
       >
-        <Providers>
-          <RecoilProvider>{children}</RecoilProvider>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

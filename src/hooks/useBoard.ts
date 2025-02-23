@@ -49,7 +49,7 @@ export const useBoard = () => {
   const updateBoardOrder = useMutation({
     mutationFn: boardApi.updateBoardOrder,
     onSuccess: (updatedBoards) => {
-      queryClient.setQueryData(['boards'], updatedBoards); // UI 업데이트
+      queryClient.setQueryData(['boards'], updatedBoards);
     },
   });
 

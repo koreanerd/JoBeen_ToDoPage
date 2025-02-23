@@ -109,7 +109,6 @@ export async function PUT(req: Request) {
       );
     }
 
-    // 태스크 이동 처리
     if (fromBoardId && toBoardId && taskId) {
       const fromBoard = boardsData.boards.find(
         (b) => b.id === Number(fromBoardId),
