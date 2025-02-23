@@ -1,26 +1,29 @@
 'use client';
 
-import { Board } from '@/types/board';
-import { CSS } from '@dnd-kit/utilities';
-import BoardColumn from '@/components/board/BoardColumn';
 import { useSortable } from '@dnd-kit/sortable';
-import { useTask } from '@/hooks/useTask';
+import { CSS } from '@dnd-kit/utilities';
+import TaskCard from './TaskCard';
 
-interface DraggableBoardColumnProps {
-  board: Board;
+interface DraggableTaskCardProps {
+  boardId: number;
+  task: {
+    id: number;
+    title: string;
+    description: string;
+  };
 }
 
-export default function DraggableBoardColumn({
-  board,
-}: DraggableBoardColumnProps) {
+export default function DraggableTaskCard({
+  boardId,
+  task,
+}: DraggableTaskCardProps) {
   const { attributes, listeners, setNodeRef, transform } = useSortable({
-    id: board.id,
+    id: `task-${task.id}`,
+    data: { type: 'task', taskId: task.id, boardId },
   });
 
-  const { tasks, addTask } = useTask(board.id);
-
   const style = {
-    transform: transform ? CSS.Transform.toString(transform) : undefined,
+    transform: CSS.Transform.toString(transform),
   };
 
   return (
@@ -38,8 +41,12 @@ export default function DraggableBoardColumn({
           <div className="w-full h-[2px] bg-accent"></div>
         </div>
       </div>
-
-      <BoardColumn board={board} tasks={tasks} addTask={addTask} />
+      <TaskCard
+        id={task.id}
+        title={task.title}
+        description={task.description}
+        boardId={boardId}
+      />
     </div>
   );
 }

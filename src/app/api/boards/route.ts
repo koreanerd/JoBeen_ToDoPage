@@ -1,6 +1,20 @@
 import { NextResponse } from 'next/server';
+import { Board } from '@/types/board';
 
-let boards = [{ id: 1, status: 'default', title: 'Click & Change title 📌' }];
+export let boards: Board[] = [
+  {
+    id: 1,
+    status: 'default',
+    title: 'Click & Change title 📌',
+    tasks: [{ id: 1, title: 'Task 1', description: 'description', boardId: 1 }],
+  },
+  {
+    id: 2,
+    status: 'default',
+    title: 'Click & Change title 📌',
+    tasks: [{ id: 2, title: 'Task 2', description: 'description', boardId: 2 }],
+  },
+];
 
 export async function GET() {
   return NextResponse.json(boards);
@@ -18,6 +32,7 @@ export async function POST(req: Request) {
       id: Date.now(),
       status,
       title,
+      tasks: [],
     };
 
     boards.push(newBoard);
@@ -34,7 +49,9 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const { id } = await req.json();
+
     boards = boards.filter((board) => board.id !== id);
+
     return NextResponse.json(
       { message: 'Board deleted successfully' },
       { status: 200 },
@@ -59,16 +76,19 @@ export async function PUT(req: Request) {
         );
       }
       boards = updatedBoards;
+
       return NextResponse.json(boards, { status: 200 });
     }
 
     if (id && title) {
       const boardIndex = boards.findIndex((board) => board.id === id);
+
       if (boardIndex === -1) {
         return NextResponse.json({ error: 'Board not found' }, { status: 404 });
       }
 
       boards[boardIndex].title = title;
+
       return NextResponse.json(boards[boardIndex], { status: 200 });
     }
 

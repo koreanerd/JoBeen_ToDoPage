@@ -1,26 +1,74 @@
 'use client';
 
 import { useState } from 'react';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { Board } from '@/types/board';
+import { Task } from '@/types/task';
 import { useBoard } from '@/hooks/useBoard';
+import { useTask } from '@/hooks/useTask';
 import { svgPaths } from '@/config/svgPaths';
-import TaskCard from '@/components/card/TaskCard';
 import SvgIcon from '../icons/SvgIcon';
 import IconButton from '../common/IconButton';
+import DraggableTaskCard from '../card/DraggableTaskCard';
+import { UseMutationResult } from '@tanstack/react-query';
 
-export default function BoardColumn({ id, title }: Board) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [newTitle, setNewTitle] = useState(title);
+interface BoardColumnProps {
+  board: Board;
+  tasks: Task[];
+  addTask: UseMutationResult<
+    Task,
+    Error,
+    { boardId: number; title: string },
+    unknown
+  >;
+}
+
+export default function BoardColumn({
+  board,
+  tasks,
+  addTask,
+}: BoardColumnProps) {
   const { updateBoardTitle, deleteBoard } = useBoard();
+  const { updateTaskOrder } = useTask(board.id);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [newTitle, setNewTitle] = useState(board.title);
+
+  const boardTasks: Task[] = Array.isArray(tasks) ? tasks : [];
 
   const handleEdit = () => setIsEditing(true);
 
   const handleConfirmEdit = () => {
     setIsEditing(false);
-    if (newTitle.trim() !== '' && newTitle !== title) {
-      updateBoardTitle.mutate({ id, title: newTitle });
+    if (newTitle.trim() !== '' && newTitle !== board.title) {
+      updateBoardTitle.mutate({ id: board.id, title: newTitle });
     } else {
-      setNewTitle(title);
+      setNewTitle(board.title);
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    const activeData = active.data.current;
+    const overData = over.data.current;
+
+    if (!activeData || !overData) return;
+
+    if (activeData.type === 'task' && overData.type === 'task') {
+      const fromBoardId = activeData.boardId;
+      const toBoardId = overData.boardId;
+
+      if (fromBoardId === toBoardId) {
+        updateTaskOrder(fromBoardId, activeData.taskId, overData.taskId);
+      }
     }
   };
 
@@ -42,14 +90,11 @@ export default function BoardColumn({ id, title }: Board) {
             onClick={handleEdit}
             className="px-[5px] border border-accent rounded cursor-pointer"
           >
-            {title}
+            {board.title}
           </h2>
         )}
-
-        <div className="text-body">0</div>
-
         <IconButton
-          onClick={() => deleteBoard.mutate(id)}
+          onClick={() => deleteBoard.mutate(board.id)}
           icon={
             <SvgIcon
               className="text-accent opacity-[50%] hover:text-accent hover:opacity-[100%]"
@@ -61,25 +106,39 @@ export default function BoardColumn({ id, title }: Board) {
           }
           aria-label="Delete Board"
           title="Delete Board"
-          className="absolute top-[25px] right-0 hidden group-hover:flex pointer-events-auto"
         />
       </div>
 
-      <div>
-        <TaskCard />
-      </div>
+      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext
+          items={boardTasks.map((task) => `task-${task.id}`)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div>
+            {boardTasks.map((task) => (
+              <DraggableTaskCard
+                key={task.id}
+                boardId={board.id}
+                task={{ ...task, description: task.description ?? '' }}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
 
-      <div className="flex items-center gap-[5px] py-[5px] pl-[15px] border border-fade mt-[12px] rounded-[5px] hover:border-none hover:bg-accent">
+      <button
+        onClick={() => addTask.mutate({ boardId: board.id, title: 'New Task' })}
+        className="flex items-center gap-[5px] w-full py-[5px] pl-[15px] border border-fade mt-[12px] rounded-[5px] hover:border-none hover:bg-accent"
+      >
         <SvgIcon
           className="text-fade"
           width={20}
           height={20}
-          pathData="M9.5 4.25C9.91421 4.25 10.25 4.58579 10.25 5V9.25H14.5C14.9142 9.25 15.25 9.58579 15.25 10C15.25 10.4142 14.9142 10.75 14.5 10.75H10.25V15C10.25 15.4142 9.91421 15.75 9.5 15.75C9.08579 15.75 8.75 15.4142 8.75 15V10.75H4.5C4.08579 10.75 3.75 10.4142 3.75 10C3.75 9.58579 4.08579 9.25 4.5 9.25H8.75V5C8.75 4.58579 9.08579 4.25 9.5 4.25Z"
+          pathData={svgPaths.plus}
           viewBox="0 0 20 20"
         />
-
         <div className="text-subHeading text-fade">New task</div>
-      </div>
+      </button>
     </div>
   );
 }

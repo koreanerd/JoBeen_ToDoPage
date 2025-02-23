@@ -20,14 +20,18 @@ export default function BoardContainer() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id) {
+      return;
+    }
 
     const oldIndex = boards.findIndex((b) => b.id === active.id);
     const newIndex = boards.findIndex((b) => b.id === over.id);
 
     if (oldIndex !== -1 && newIndex !== -1) {
       const newBoards = arrayMove(boards, oldIndex, newIndex);
+
       setBoards(newBoards);
+
       updateBoardOrder.mutate(newBoards);
     }
   };
@@ -68,7 +72,7 @@ export default function BoardContainer() {
                   className="text-accent hover:opacity-[50%]"
                   width={25}
                   height={25}
-                  pathData={svgPaths.plust}
+                  pathData={svgPaths.plus}
                   viewBox="0 0 20 20"
                 />
               }
